@@ -1,0 +1,59 @@
+
+<link href="http://vjs.zencdn.net/5.8.8/video-js.css" rel="stylesheet">
+<script src="static/src/js/jquery-2.1.4.min.js"></script>
+<script src="static/src/js/jquery.danmu.js"></script>
+<script src="https://cdn.jsdelivr.net/hls.js/latest/hls.min.js"></script>
+<div style="float:left; position:relative; height:360px; width:640px;">
+    <div id="danmu">
+        <video id="video" controls style="width:720px; height:480px;"></video>
+    </div>
+</div>
+<div style="padding:2px;position:relative; float:right; height:480px; width: calc( 100% - 720px );">
+        <h3 class="ui dividing header">Live! Talk</h3>
+        <div class="ui form">
+              <div class="field">
+        <textarea id="chat" cols="80" rows="20"></textarea>
+        <br \>
+        <input id="text"  placeholder="type message">
+             </div>
+        </div>
+</div>
+<div class="ui tiny red statistic" style="width:100%;">
+    <div style="position:relative; " class="ui divider"></div>
+    <div class="label">
+        {{username}}. Drone Stream
+    </div>
+    <div class="value">
+        Live! On AIR 
+    </div>
+    <div style="position:relative; " class="ui divider"></div>
+</div>
+<form class="ui form">
+    <div class="field">
+        <textarea rows="1"></textarea>
+    </div>
+    <div class="ui blue submit  button">
+        Add Danmu
+    </div>
+</form>
+<script>
+if(Hls.isSupported()) {
+    var video = document.getElementById('video');
+    var hls = new Hls();
+    hls.loadSource('http://140.125.45.186:8083/hls/12345678.m3u8');
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,function() {
+        video.play();
+    });
+}
+$("#danmu").danmu({
+    height: 480,  //弹幕区高度
+    width: 720,   //弹幕区宽度})
+    })
+$("#danmu").danmu("addDanmu",[
+        { text:"我是會亂跑的彈幕" ,color:"white",size:1,position:0,time:5}
+        ,{ text:"我跑跑跑跑" ,color:"yellow" ,size:1,position:1,time:30}
+        ,{ text:"我在底部" , color:"red" ,size:1,position:2,time:30}
+]);
+$('#danmu').danmu('danmuStart');
+</script>
