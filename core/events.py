@@ -1,5 +1,6 @@
 from flask import session
 from flask_socketio import emit, join_room, leave_room
+from core_module.dbmongo import ChatRoom
 from . import socketio
 
 
@@ -12,6 +13,7 @@ def joined(message):
 @socketio.on('text', namespace='/chat')
 def text(message):
     room = 'bj4'
+    ChatRoom.add(str(message['username']),message['msg'])
     emit('message', {'msg': str(message['username']) + ':' + message['msg']}, room=room)
 
 

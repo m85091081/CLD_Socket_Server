@@ -25,4 +25,12 @@ class User:
         print(user.insert_one(raw).inserted_id)
         return True
 
-
+class ChatRoom:
+    chatdb = db['ChatRoom']
+    def add(username,string):
+        raw = {"username": username,
+                "string": string,
+                "datetime": datetime.datetime.utcnow()
+                }
+        chatdb.insert_one(raw)
+        return True
