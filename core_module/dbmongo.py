@@ -1,7 +1,6 @@
 import datetime
 import conf.setting as setting 
 from pymongo import MongoClient
-from github import Github
 client = MongoClient(setting.mongohost)
 db = client['CloudServer']
 class InitDB:

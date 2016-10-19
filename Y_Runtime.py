@@ -18,7 +18,7 @@ if __name__ == '__main__':
     print('Yakumo is run on ' + str(setting.host) + ':' + str(setting.port))
     # check debug
     if setting.debug == 1:
-        debugB = False 
+        debugB = True
         socketio.run(app, debug=debugB, host=str(setting.host), port=setting.port)
     else:
         debugB = True

@@ -7,13 +7,12 @@ from . import socketio
 def joined(message):
     room = 'bj4'
     join_room(room)
-    emit('status', {'msg': session.get('name') + ' has entered the room.'}, room=room)
-
+    emit('status', {'msg': str(message['username']) + ' has entered the room.'}, room=room)
 
 @socketio.on('text', namespace='/chat')
 def text(message):
     room = 'bj4'
-    emit('message', {'msg': session.get('name') + ':' + message['msg']}, room=room)
+    emit('message', {'msg': str(message['username']) + ':' + message['msg']}, room=room)
 
 
 @socketio.on('left', namespace='/chat')

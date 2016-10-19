@@ -28,7 +28,7 @@ def login():
         return redirect(url_for('main.index'))
 
 @auth.route('/api', methods=['GET', 'POST'])
-def login():
+def loginapi():
     if request.method == 'POST':
         user = request.form['buser']
         passd = request.form['bpass']
