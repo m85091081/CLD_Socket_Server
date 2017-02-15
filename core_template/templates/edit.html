@@ -29,12 +29,13 @@
     <div style="position:relative; " class="ui divider"></div>
 </div>
 <form class="ui form">
-    <div class="field">
-        <textarea rows="1"></textarea>
-    </div>
-    <div class="ui blue submit  button">
-        Add Danmu
-    </div>
+	<div class="ui right labeled left icon input">
+		  <i class="tags icon"></i>
+		    <input placeholder="Enter tags" type="text">
+			  <a class="ui tag label">
+				      Add Tag
+					    </a>
+	</div>
 </form>
 <script>
 if(Hls.isSupported()) {
@@ -56,4 +57,6 @@ $("#danmu").danmu("addDanmu",[
         ,{ text:"我在底部" , color:"red" ,size:1,position:2,time:30}
 ]);
 $('#danmu').danmu('danmuStart');
+
+
 </script>
