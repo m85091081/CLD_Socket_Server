@@ -1,41 +1,134 @@
-{% extends "nbase.html"%}
+{% extends "tosbase.html"%}
 {% block title %}HLS/Drone UI Protype{% endblock %}
 {% block top %}{% include "topbar.html" %}{% endblock %}
 {% block content %}
-			{% include "edit.html" %}
+<div class="ts grid" style="top:20px;">
+	<div class="one wide column"></div>
+	<div class="four wide column" style="padding:15px;">
+		<h3 class="ts header">
+			<i class="plug icon"></i>
+			<div class="content">
+				目前監測租借站
+				<div id ="dronesta" class="sub header">
+					尚未選擇
+				</div>
+			</div>
+		</h3>
+		<div class="ts divider"></div>
+
+		<a id="liveplay" onclick="showlive()"class="ts disabled primary card">
+			<div class="content">
+				<div class="header">觀看直播</div>
+				<div class="meta"><div>ardrone live</div></div>
+				<div class="describle">點擊此按鈕以觀看現場串流</div>
+			</div>
+			<div class="symbol">
+				<i class="circle record icon"></i>
+			</div>
+		</a>
+		<a id="vplay" class="ts disabled info card">
+			<div class="content">
+				<div class="header">影片回放</div>
+				<div class="meta"><div>ardrone replay</div></div>
+				<div class="describle">點擊此按鈕以觀看影片回放</div>
+			</div>
+			<div class="symbol">
+				<i class="play circle icon"></i>
+			</div>
+		</a>
+	</div>
+	<div class="ten wide column">
+		<div style="height: 650px;">
+			<div id="map" style="height:100%;"></div>
+		</div>
+
+	</div>
+	<div class="one wide column"></div>
+</div>
+<div class="ts modals dimmer">
+<dialog class="ts basic closable modal" id="showlive" open>
+<div class="header">
+正在串流目前監測站的資訊
+</div>
+<div>
+	{% include "edit.html" %}	
+</div>
+</dialog>
+</div>
+
 {% endblock %}
 {% block script %}
-        <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-        <script type="text/javascript" charset="utf-8">
-            var socket;
-            $(document).ready(function(){
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
-                socket.on('connect', function() {
-                    socket.emit('joined',{username:'{{session['username']}}'});
-                });
-                socket.on('status', function(data) {
-                    $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                });
-                socket.on('message', function(data) {
-                    $('#chat').val($('#chat').val() + data.msg + '\n');
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                });
-                $('#text').keypress(function(e) {
-                    var code = e.keyCode || e.which;
-                    if (code == 13) {
-                        text = $('#text').val();
-                        $('#text').val('');
-                        socket.emit('text', {username:'{{session['username']}}',msg: text});
-                    }
-                });
-            });
-            function leave_room() {
-                socket.emit('left', {}, function() {
-                    socket.disconnect({username:'{{session['username']}}'});
-                    window.location.href = "{{ url_for('main.index') }}";
-                });
-            }
-        </script>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+<script type="text/javascript">
+
+function initMap() {
+	var location4 = {lat: {{Pos1X}}, lng: {{Pos1Y}}};
+	var location2 = {lat: {{Pos2X}}, lng: {{Pos2Y}}};
+	var location3 = {lat: {{Pos3X}}, lng: {{Pos3Y}}};
+	var location1 = {lat: {{Pos4X}}, lng: {{Pos4Y}}};
+	var map = new google.maps.Map(document.getElementById('map'), {
+		center: location1,
+		zoom: 19
+	});
+	{%for x in range(1,5)%}
+	var marker{{x}} = new google.maps.Marker({
+		position: location{{x}},
+		title: '租借站 {{x}} ',
+		map: map
+	});
+	marker{{x}}.addListener('click', function() {
+		document.getElementById("vplay").classList.remove("disabled");
+		document.getElementById("liveplay").classList.remove("disabled");
+		document.getElementById("dronesta").textContent=marker{{x}}.getTitle();
+	});
+	{%endfor%}
+
+}
+
+</script>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmOEKzlfm1MQI0_r5LnsJ23RfdKGRCjxQ&callback=initMap" async defer></script>
+
+<script type="text/javascript" charset="utf-8">
+var socket;
+$(document).ready(function(){
+	socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+	socket.on('connect', function() {
+		socket.emit('joined',{username:'{{session['username']}}'});
+	});
+	socket.on('status', function(data) {
+		$('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
+		$('#chat').scrollTop($('#chat')[0].scrollHeight);
+	});
+	socket.on('message', function(data) {
+		$('#chat').val($('#chat').val() + data.msg + '\n');
+		$('#chat').scrollTop($('#chat')[0].scrollHeight);
+	});
+	$('#text').keypress(function(e) {
+		var code = e.keyCode || e.which;
+		if (code == 13) {
+			text = $('#text').val();
+			$('#text').val('');
+			socket.emit('text', {username:'{{session['username']}}',msg: text});
+		}
+	});
+});
+function leave_room() {
+	socket.emit('left', {}, function() {
+		socket.disconnect({username:'{{session['username']}}'});
+		window.location.href = "{{ url_for('main.index') }}";
+	});
+}
+
+function showlive() {
+	var hasClass = document.getElementById("liveplay").classList.contains('disabled');
+	if (hasClass == false) {
+	ts('#showlive').modal("show");
+	
+	}
+}
+</script>
 {% endblock %}
