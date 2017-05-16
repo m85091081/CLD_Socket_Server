@@ -1,21 +1,34 @@
 # -*- coding: utf-8 -*-
-# muMDAU_app main / first page 
-from core import app, socketio
-from threading import Thread
-from flask import request, render_template, Blueprint, url_for, redirect, session
+# muMDAU_app main / first page
+from core import app
+from flask import request, render_template, \
+        url_for, redirect, session, Blueprint
 from core_module.dbmongo import User
-import subprocess, os
-from subprocess import PIPE
-from time import sleep
-main = Blueprint('main', __name__ , template_folder='../core_template/templates')
-thread = None
-# index page main route page 
+
+main = Blueprint(
+        'main',
+        __name__,
+        template_folder='../core_template/templates'
+        )
+
+
+# index page main route page
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    Pos1Y = 120.536654
+    Pos1X = 23.695556
+    Pos2Y = 120.536738
+    Pos2X = 23.694996
+    Pos3Y = 120.537346
+    Pos3X = 23.695508
+    Pos4Y = 120.535441
+    Pos4X = 23.695428
     if 'username' in session:
         return render_template('panel.html', **locals())
     else:
-        return render_template('login.html')
+        return render_template('panel.html', **locals())
+        #return render_template('login.html')
+
 
 # init route to first time use
 @app.route('/init', methods=['GET', 'POST'])
@@ -31,20 +44,3 @@ def init():
         return redirect(url_for('main.index'))
     else:
         return render_template('first.html')
-
-# test of adduser route page 
-@app.route('/adduser', methods=['GET', 'POST'])
-def adduser():
-    if request.method == 'POST':
-        user = request.form['buser']
-        if LoginSQL.getPass(user) is None:
-            import hashlib
-            import random
-            ans = random.uniform(1, 10)
-            hashpass1 = hashlib.sha1(str(ans).encode())
-            passd1 = hashpass1.hexdigest()
-            hashpass0 = hashlib.sha256(passd1.replace('\n', '').encode())
-            ManageSQL.addUser(user, hashpass0.hexdigest(), '0', '1')
-            return passd1
-        else:
-            return '使用者已經他媽的存在了喔！'

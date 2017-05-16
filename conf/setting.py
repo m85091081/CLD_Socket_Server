@@ -8,7 +8,7 @@
 
 # Server Setting
 host = '0.0.0.0'
-port = 80
+port = 8080
 
 # Github Setting
 gitpath = 'https://github.com/0mu-Project/blog.git'
