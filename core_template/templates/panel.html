@@ -8,7 +8,7 @@
 		<h3 class="ts header">
 			<i class="plug icon"></i>
 			<div class="content">
-				目前監測租借站
+				目前監測站
 				<div id ="dronesta" class="sub header">
 					尚未選擇
 				</div>
@@ -26,7 +26,7 @@
 				<i class="circle record icon"></i>
 			</div>
 		</a>
-		<a id="vplay" class="ts disabled info card">
+		<a id="vplay"  class="ts disabled info card">
 			<div class="content">
 				<div class="header">影片回放</div>
 				<div class="meta"><div>ardrone replay</div></div>
@@ -56,13 +56,65 @@
 </dialog>
 </div>
 
+<div class="ts modals dimmer">
+<dialog class="ts basic closable modal" id="showfile3" open>
+<div class="header">
+監測站的歷史影片
+</div>
+<div>
+{% for x in onlyfiles3 %}
+<li><a href="http://140.125.45.186/hlsvideo3/{{ x }}">{{x}}</a></li>
+{% endfor %}
+</div>
+</dialog>
+</div>
+
+<div class="ts modals dimmer">
+<dialog class="ts basic closable modal" id="showfile4" open>
+<div class="header">
+監測站的歷史影片
+</div>
+<div>
+{% for x in onlyfiles4 %}
+<li><a href="http://140.125.45.186/hlsvideo4/{{ x }}">{{x}}</a></li>
+{% endfor %}
+</div>
+</dialog>
+</div>
+
+
+<div class="ts modals dimmer">
+<dialog class="ts basic closable modal" id="showfile2" open>
+<div class="header">
+監測站的歷史影片
+</div>
+<div>
+{% for x in onlyfiles2 %}
+<li><a href="http://140.125.45.186/hlsvideo2/{{ x }}">{{x}}</a></li>
+{% endfor %}
+</div>
+</dialog>
+</div>
+
+<div class="ts modals dimmer">
+<dialog class="ts basic closable modal" id="showfile1" open>
+<div class="header">
+監測站的歷史影片
+</div>
+<div>
+{% for x in onlyfiles1 %}
+<li><a href="http://140.125.45.186/hlsvideo1/{{ x }}">{{x}}</a></li>
+{% endfor %}
+</div>
+</dialog>
+</div>
+
 {% endblock %}
 {% block script %}
 <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 
 <script type="text/javascript">
-
 function initMap() {
 	var location4 = {lat: {{Pos1X}}, lng: {{Pos1Y}}};
 	var location2 = {lat: {{Pos2X}}, lng: {{Pos2Y}}};
@@ -76,16 +128,49 @@ function initMap() {
 	var marker{{x}} = new google.maps.Marker({
 		position: location{{x}},
 		title: '租借站 {{x}} ',
-		map: map
+		map: map,
+                icon : 'http://imgur.com/nHTm4LK.png'            
 	});
 	marker{{x}}.addListener('click', function() {
+                document.getElementById("vplay").onclick = function(){showfile{{x}}();};
 		document.getElementById("vplay").classList.remove("disabled");
 		document.getElementById("liveplay").classList.remove("disabled");
 		document.getElementById("dronesta").textContent=marker{{x}}.getTitle();
 	});
 	{%endfor%}
+var cityCircle = null ;
+setInterval(function() {
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.open("GET", "http://140.125.45.200:2226/hbase/Drone_web/AR_Status_get.jsp",200);
+xmlhttp.onreadystatechange = function() {
+if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+{
+if (JSON.parse(xmlhttp.responseText).RMODE == "true"){
+	var locationwar = {lat: parseFloat(JSON.parse(xmlhttp.responseText).Lat), lng: parseFloat(JSON.parse(xmlhttp.responseText).Lng)};
+	var markerwarming = new google.maps.Marker({
+		position: locationwar,
+		map: map,
+                icon : 'http://imgur.com/LiNw1ay.png'            
+	});
+
+if (cityCircle == null){
+cityCircle = new google.maps.Circle({
+                                strokeColor: '#FF0000',
+                                fillColor: '#000000',
+                                map: map,
+                                center: locationwar,
+                                radius: 50
+                        });
+} 
+}
+}
+};
+xmlhttp.send(null);
+
+},2000);
 
 }
+
 
 </script>
 
@@ -127,8 +212,15 @@ function showlive() {
 	var hasClass = document.getElementById("liveplay").classList.contains('disabled');
 	if (hasClass == false) {
 	ts('#showlive').modal("show");
-	
 	}
 }
+	{%for x in range(1,5)%}
+function showfile{{ x }}() {
+	var hasClass = document.getElementById("vplay").classList.contains('disabled');
+	if (hasClass == false) {
+	ts('#showfile{{x}}').modal("show");
+	}
+}
+{%endfor%}
 </script>
 {% endblock %}

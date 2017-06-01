@@ -14,15 +14,6 @@ client.upload_file('compute.py')
 
 main = Blueprint('main', __name__ , template_folder='../core_template/templates')
 # index page main route page 
-@main.route('/download',methods=['GET'])
-def download():
-    from os import listdir
-    from os.path import isfile, join
-    mypath = '/home/ubuntu/hlsvideo'
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-    return render_template('paneldw.html', **locals())
-    
-
 @main.route('/api/compute/car_KL',methods=['GET','POST'])
 def carkl():
     other_car_X = client.gather(client.map(othercar_X_map,othercar_x_raw(dataget())))
@@ -40,6 +31,16 @@ def carkl():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    from os import listdir
+    from os.path import isfile, join
+    mypath1 = '/home/ubuntu/hlsvideo1'
+    onlyfiles1 = [f for f in listdir(mypath1) if isfile(join(mypath1, f))]
+    mypath2 = '/home/ubuntu/hlsvideo2'
+    onlyfiles2 = [f for f in listdir(mypath2) if isfile(join(mypath2, f))]
+    mypath3 = '/home/ubuntu/hlsvideo3'
+    onlyfiles3 = [f for f in listdir(mypath3) if isfile(join(mypath3, f))]
+    mypath4 = '/home/ubuntu/hlsvideo4'
+    onlyfiles4 = [f for f in listdir(mypath4) if isfile(join(mypath4, f))]
     Pos1Y = 120.536654
     Pos1X = 23.695556
     Pos2Y = 120.536738

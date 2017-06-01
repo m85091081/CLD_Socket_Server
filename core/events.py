@@ -12,6 +12,7 @@ def joined(message):
 @socketio.on('text', namespace='/chat')
 def text(message):
     room = 'bj4'
+    print(message)
     emit('message', {'msg': str(message['username']) + ':' + message['msg']}, room=room)
 
 
